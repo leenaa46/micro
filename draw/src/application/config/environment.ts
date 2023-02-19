@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import * as process from "process";
 
 dotenv.config({ path: ".env" })
 
@@ -37,10 +38,11 @@ export const SESSION_SECRET = process.env.JWT_SECRET || ""
 *  MySQL
 */
 export const CONFIG_MYSQL = {
-    host     : process.env.HOST,
+    host     : process.env.DB_HOST,
     user     : process.env.DB_USER,
     password : process.env.DB_PASSWORD,
-    database : process.env.DATABASE
+    database : process.env.DATABASE,
+    port: process.env.DB_PORT
 }
 
 /**
@@ -49,7 +51,7 @@ export const CONFIG_MYSQL = {
 export const MONGODB_URI = PROD
     ? process.env.MONGO_PRODUCTION
     : process.env.MONGO_DEVELOPMENT
-    
+
 /**
  * Postgres
  */

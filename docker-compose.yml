@@ -21,14 +21,23 @@ services:
       - ./:/draw
       - /draw/node_modules
     networks:
-      kong-net:
-      api-net:
+      - kong-net
+      - api-net
     ports:
       - "9000:9000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - PORT=9000
-    command: "npm run watch"
+
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=myuser
+      - DB_PASSWORD=myuserpassword
+      - DATABASE=mydatabase
+
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:latest
@@ -38,13 +47,19 @@ services:
       MYSQL_DATABASE: mydatabase
       MYSQL_USER: myuser
       MYSQL_PASSWORD: myuserpassword
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
     networks:
-      api-net:
+      - api-net
     ports:
-      - "3306:3306"
+      - "33061:3306"
     volumes:
       - "./data:/var/lib/mysql"
 
 networks:
   kong-net:
+    driver: bridge
   api-net:
+    driver: bridge
