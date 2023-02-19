@@ -1,27 +1,21 @@
-_format_version: "1.1"
+_format_version: "3.0"
+_transform: true
+
 services:
-  - name: example-service
-    url: http://example.com
-    routes:
-      - name: example-route
-        paths:
-          - /example
+  - name: draw-service
+    url: http://api:9000/v1
     plugins:
       - name: jwt
-        config:
-          secret_is_base64: true
-      - name: rate-limiting
-        config:
-          second: 10
-          minute: 100
-          hour: null
+    routes:
+      - name: api-v1-route
+        paths:
+          - /draws/v1
+
 consumers:
-  - username: alice
-    custom_id: alice123
-    acls:
-      - group: users
-    keyauth_credentials:
-      - key: alicekey
-    jwt_secrets:
-      - key: alicejwtsecret
-        secret: myjwtsecret
+  - custom_id: my-user-01
+    username: my-user-01
+jwt_secrets:
+  - consumer: my-user-01
+    algorithm: HS256
+    key: 0pOR32s8ycLbUdVu7uLRP2HhIDP6n2eE
+    secret: pyk8mCpScq6YmndVxEnzdYgLtg5H7E7Y

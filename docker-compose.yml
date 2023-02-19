@@ -6,11 +6,14 @@ services:
       dockerfile: Dockerfile
     networks:
       - kong-net
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /etc/kong/kong.yaml
     ports:
       - "8000:8000"
       - "8001:8001"
     volumes:
-      - ./kong.conf:/usr/local/kong/declarative/kong.conf
+      - ./api-gateway/kong.yaml:/etc/kong/kong.yaml
     command: kong start --run-migrations databaseless
 
   api:
