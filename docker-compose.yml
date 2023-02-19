@@ -1,0 +1,50 @@
+version: '3.1'
+services:
+  kong:
+    build:
+      context: api-gateway
+      dockerfile: Dockerfile
+    networks:
+      - kong-net
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    volumes:
+      - ./kong.conf:/usr/local/kong/declarative/kong.conf
+    command: kong start --run-migrations databaseless
+
+  api:
+    build:
+      context: draw
+      dockerfile: src/deployment/Dockerfile
+    volumes:
+      - ./:/draw
+      - /draw/node_modules
+    networks:
+      kong-net:
+      api-net:
+    ports:
+      - "9000:9000"
+    environment:
+      - NODE_ENV=development
+      - PORT=9000
+    command: "npm run watch"
+
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: myuserpassword
+    networks:
+      api-net:
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./data:/var/lib/mysql"
+
+networks:
+  kong-net:
+  api-net:
